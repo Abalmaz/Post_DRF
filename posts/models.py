@@ -1,3 +1,6 @@
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -28,11 +31,21 @@ class Post(models.Model):
     )
 
     status = models.SmallIntegerField(choices=STATUSES, default=STATUS_DRAFT)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='posts', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
+    highlighted = models.TextField(default='')
     title = models.CharField(max_length=50)
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        lexer = get_lexer_by_name(self.language)
+        linenos = self.linenos and 'table' or False
+        options = self.title and {'title': self.title} or {}
+        formatter = HtmlFormatter(style=self.style, linenos=linenos,
+                                  full=True, **options)
+        self.highlighted = highlight(self.code, lexer, formatter)
+        super(Post, self).save(*args, **kwargs)
 
 
