@@ -17,15 +17,19 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from django.conf.urls import url, include
+from rest_framework_swagger.views import get_swagger_view
 from rest_framework.urlpatterns import format_suffix_patterns
 from posts import views
+
+schema_view = get_swagger_view(title='Posts API')
 
 router = DefaultRouter()
 router.register(r'posts', views.PostViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^$', schema_view),
+    # url(r'^', include(router.urls)),
     url(r'^categories/$', views.CategoryList.as_view()),
     url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryDetail.as_view()),
     url(r'^api-auth/', include('rest_framework.urls')),
