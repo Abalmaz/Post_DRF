@@ -15,21 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from django.conf.urls import url, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from posts import views
 
+router = DefaultRouter()
+router.register(r'posts', views.PostViewSet)
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^posts/$', views.PostList.as_view()),
-    url(r'^post/(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),
-    url(r'^post/(?P<pk>[0-9]+)/highlight/$', views.PostHighlight.as_view()),
+    url(r'^', include(router.urls))
     url(r'^categories/$', views.CategoryList.as_view()),
     url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryDetail.as_view()),
-    url(r'^users/$', views.UserList.as_view()),
-    url(r'^user/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
     url(r'^api-auth/', include('rest_framework.urls')),
-
     path('admin/', admin.site.urls),
 
 ]
