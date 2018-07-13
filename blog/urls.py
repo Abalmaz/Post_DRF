@@ -23,6 +23,8 @@ from posts import views
 urlpatterns = [
     url(r'^posts/$', views.PostList.as_view()),
     url(r'^post/(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),
+    url(r'^categories/$', views.CategoryList.as_view()),
+    url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryDetail.as_view()),
 
     path('admin/', admin.site.urls),
 

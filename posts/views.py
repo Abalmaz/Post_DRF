@@ -1,6 +1,8 @@
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import mixins
+from rest_framework import generics
 from rest_framework.views import APIView
 from posts.models import Post, Category
 from posts.serializers import PostSerializer, CategorySerializer
@@ -62,4 +64,55 @@ class PostDetail(APIView):
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class CategoryList(mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   generics.GenericAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return a list of all Categories
+        """
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Create a new Category, If an object is created this returns a '201 Created' response
+        else if the request was invalid return a '400 Bad Request'
+        """
+        return self.create(request, *args, **kwargs)
+
+
+class CategoryDetail(mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     generics.GenericAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get(self, request, *args, **kwargs):
+        """
+        Retrieve a category instance
+        If an object can be retrieved this returns a '200 OK' response,
+        else '404 Not Found'
+        """
+        return self.retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Partial update a category instance,
+        If an object is updated this returns a 200 OK response,
+        else returns '400 Bad Request' with error details
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Delete a category instance,
+        If an object is deleted this returns a '204 No Content' response,
+        else '404 Not Found'
+        """
+        return self.destroy(request, *args, **kwargs)
 
