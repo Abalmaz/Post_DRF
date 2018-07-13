@@ -5,7 +5,8 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework.views import APIView
 from posts.models import Post, Category
-from posts.serializers import PostSerializer, CategorySerializer
+from django.contrib.auth.models import User
+from posts.serializers import PostSerializer, CategorySerializer, UserSerializer
 
 # Create your views here.
 
@@ -116,3 +117,12 @@ class CategoryDetail(mixins.RetrieveModelMixin,
         """
         return self.destroy(request, *args, **kwargs)
 
+
+class UserList(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrievUpdateDestriyAPIView):
+    queryset = User.objects.all()
+    serialize_class = UserSerializer
