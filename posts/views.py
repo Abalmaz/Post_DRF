@@ -1,5 +1,7 @@
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import renderers
+from rest_framework.response import Respons
 from posts.permissions import IsOwnerOrReadOnly
 from posts.models import Post, Category
 from django.contrib.auth.models import User
@@ -25,6 +27,11 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
 
 
+class PostHighlight(generics.GenericAPIView):
+    queryset = Post.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer, )
+
+
 class CategoryList(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -43,3 +50,7 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serialize_class = UserSerializer
+
+    def get(self, request, *args, **kwargs):
+        post = self.get_object()
+        return Respons(post.highlighted)
