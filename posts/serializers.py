@@ -4,10 +4,11 @@ from posts.models import Post, Category
 
 
 class UserSerializer(serializers.ModelSerializer):
+    posts = serializers.PrimaryKeyRelatedField(many=True, queryset=Post.objects.all())
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined')
+        fields = ('id', 'username', 'posts', 'is_staff')
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -18,7 +19,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
+    user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Post

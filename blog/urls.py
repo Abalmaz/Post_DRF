@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from posts import views
 
@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'^post/(?P<pk>[0-9]+)/$', views.PostDetail.as_view()),
     url(r'^categories/$', views.CategoryList.as_view()),
     url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryDetail.as_view()),
+    url(r'^users/$', views.UserList.as_view()),
+    url(r'^user/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+    url(r'^api-auth/', include('rest_framework.urls')),
 
     path('admin/', admin.site.urls),
 
