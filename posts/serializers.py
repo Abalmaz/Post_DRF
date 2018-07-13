@@ -17,10 +17,9 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
 
 
-
 class PostSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
 
     class Meta:
         model = Post
-        fields = ('id', 'status', 'category_repr', 'category', 'user', 'title', 'content', 'created_on', 'updated_on')
+        fields = ('id', 'status', 'category', 'user', 'title', 'content', 'created_on', 'updated_on')
