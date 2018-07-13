@@ -1,61 +1,65 @@
-from django.shortcuts import render
-from rest_framework import mixins
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.viewsets import ModelViewSet
+from django.http import Http404
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
 from posts.models import Post, Category
 from posts.serializers import PostSerializer, CategorySerializer
 
 # Create your views here.
 
-#
-# def index(request):
-#     return render(request, 'posts/index.html')
+
+class PostList(APIView):
+    def get(self, request, format=None):
+        """
+        Return a list of all posts.
+        """
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        """
+        Create a new post.
+        """
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostsList(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  generics.GenericAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+class PostDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            raise Http404
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    def get(self, request, pk, format=None):
+        """
+        Retrieve a post instance
+        """
+        post = self.get_object(pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def patch(self, request, pk, format=None):
+        """
+        Partial update a post instance
+        """
+        post = self.get_object(pk)
+        serializer = PostSerializer(post, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class PostDetail(mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
-                    mixins.DestroyModelMixin,
-                    generics.GenericAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
-
-
-class CategoryViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-    def get_serializer_class(self):
-        # if self.action == 'create':
-        #     return Create
-
-        return self.serializer_class
-
-
+    def delete(self, request, pk, format=None):
+        """
+        Delete a post instance
+        """
+        post = self.get_object(pk)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
