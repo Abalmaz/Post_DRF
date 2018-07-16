@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'posts',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_swagger',
 ]
 
@@ -53,22 +54,22 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'django.middleware.locale.LocaleMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
 
 ]
 
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'locale/'),
-)
-print(LOCALE_PATHS)
-
-ugettext = lambda x:x
-
-LANGUAGES = (
-    ('en', ugettext('English')),
-    ('ru', ugettext('Russian')),
-    # ('ua', ugettext('Ukrainian')),
-)
+# LOCALE_PATHS = (
+#     os.path.join(BASE_DIR, 'locale/'),
+# )
+# print(LOCALE_PATHS)
+#
+# ugettext = lambda x:x
+#
+# LANGUAGES = (
+#     ('en', ugettext('English')),
+#     ('ru', ugettext('Russian')),
+#     # ('ua', ugettext('Ukrainian')),
+# )
 
 ROOT_URLCONF = 'blog.urls'
 

@@ -15,24 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 from django.conf.urls import url, include
 from rest_framework_swagger.views import get_swagger_view
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.authtoken.views import obtain_auth_token
 from posts import views
 
 schema_view = get_swagger_view(title='Posts API')
 
-router = DefaultRouter()
-router.register(r'posts', views.PostViewSet)
-router.register(r'users', views.UserViewSet)
+router = SimpleRouter()
+router.register(r'post', views.PostViewSet)
+router.register(r'category', views.CategoryViewSet)
+router.register(r'user', views.UserViewSet)
 
 urlpatterns = [
     url(r'^$', schema_view),
-    # url(r'^', include(router.urls)),
-    url(r'^categories/$', views.CategoryList.as_view()),
-    url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryDetail.as_view()),
-    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-token-auth/', obtain_auth_token),
     path('admin/', admin.site.urls),
 
 ]
