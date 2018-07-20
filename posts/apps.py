@@ -5,5 +5,5 @@ class PostsConfig(AppConfig):
     name = 'posts'
 
     def ready(self):
-        import blog.posts.signals
+        import posts.signals
 

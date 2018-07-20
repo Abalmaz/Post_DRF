@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import permissions, viewsets
 from posts.permissions import IsOwnerOrReadOnly, IsStaffOrReadOnly
 from posts.models import Post, Category
@@ -5,6 +6,11 @@ from django.contrib.auth.models import User
 from posts.serializers import PostSerializer, CategorySerializer, UserSerializer
 
 # Create your views here.
+
+
+def index(request):
+    posts = Post.objects.all()
+    return render(request, 'posts/index.html', {'posts': posts})
 
 
 class PostViewSet(viewsets.ModelViewSet):

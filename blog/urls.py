@@ -30,7 +30,8 @@ router.register(r'category', views.CategoryViewSet)
 router.register(r'user', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^$', schema_view),
+    url(r'^$', views.index),
+    url(r'^schema', schema_view),
     url(r'^api/', include(router.urls)),
     url(r'^api-token-auth/', obtain_auth_token),
     path('admin/', admin.site.urls),
