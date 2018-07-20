@@ -2,10 +2,29 @@
 
 {% block main %}
 <ul>
+    <div id="show_new_post">
+
+    </div>
     {% for post in posts %}
     <li>{{ post.title }}</li>
     {% endfor %}
 </ul>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    var postSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/');
+
+    postSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#show_new_post').value += (message + '\n');
+    };
+
+    postSocket.onclose = function(e) {
+        console.error('Post socket closed unexpectedly');
+    };
+</script>
 {% endblock %}
 
