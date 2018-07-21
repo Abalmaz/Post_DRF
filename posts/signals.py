@@ -2,6 +2,8 @@ from posts.models import Post
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import channels.layers
+from asgiref.sync import async_to_sync
 from rest_framework.authtoken.models import Token
 
 
@@ -12,7 +14,13 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 @receiver(post_save, sender=Post)
-def send_post(sender, created=False, **kwargs):
+def send_post(sender, instance=None, created=False, **kwargs):
     if created:
-        pass
+        channel_layer = channels.layers.get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'current_user', {
+                'type': 'new_post',
+                'message': instance.pk,
+            }
+        )
 

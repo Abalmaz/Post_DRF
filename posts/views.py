@@ -9,7 +9,7 @@ from posts.serializers import PostSerializer, CategorySerializer, UserSerializer
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-id')
     return render(request, 'posts/index.html', {'posts': posts})
 
 
